@@ -1,0 +1,24 @@
+trigger:
+  - main
+
+pool:
+  vmImage: ubuntu-selfhosted
+
+steps:
+  - task: Maven@4
+    displayName: "Run Selenium headless tests"
+    inputs:
+      mavenPomFile: 'pom.xml'
+      goals: 'test'
+      publishJUnitResults: true
+      testResultsFiles: '**/surefire-reports/TEST-*.xml'
+      javaHomeOption: 'JDKVersion'
+      jdkVersionOption: '1.17'
+      jdkArchitectureOption: 'x64'
+
+  - task: PublishPipelineArtifact@1
+    displayName: "Publish surefire reports"
+    inputs:
+      targetPath: 'target/surefire-reports'
+      artifact: 'surefire-reports'
+    condition: always()
